@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ listingInfo.Name | html.escape }}</title>
+  <meta name="description" content="{{ listingInfo.Description | html.escape }}">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<!--
+  The landing page of the listing. vrchat-community/package-list-action renders this file (and app.js) with Scriban
+  when it builds index.json: listingInfo is source.json, packages are the latest release of each package.
+  Icons: Lucide (https://lucide.dev, ISC), inlined below as symbols.
+-->
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-mark" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><g transform="translate(6.6 6.6) scale(.45)" stroke-width="4.4"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></g></symbol>
+    <symbol id="i-tripwire" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M13 7.5 10 12.5h4l-3 4.5"/></symbol>
+    <symbol id="i-package" viewBox="0 0 24 24"><svg class="lucide lucide-package" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/> <path d="M12 22V12"/> <polyline points="3.29 7 12 12 20.71 7"/> <path d="m7.5 4.27 9 5.15"/></symbol>
+  </svg>
+
+  <div class="page">
+    <header class="top">
+      <a class="brand" href="./"><svg class="icon mark"><use href="#i-mark"/></svg>{{ listingInfo.Name | html.escape }}</a>
+      <nav>
+        <button class="link" id="lang" type="button"><span data-en="日本語" data-ja="English">日本語</span></button>
+        {{~ if listingInfo.InfoLink.Url ~}}
+        <a href="{{ listingInfo.InfoLink.Url }}">GitHub</a>
+        {{~ end ~}}
+      </nav>
+    </header>
+
+    <main>
+      <p class="intro">
+        <span data-en="{{ listingInfo.Description | html.escape }}. Add this repository to VCC once, and its packages show up in all your projects."
+              data-ja="{{ listingInfo.Author.Name | html.escape }} の VRChat 用パッケージです。このリポジトリを VCC に一度追加すると、どのプロジェクトからでも入れられます。">{{ listingInfo.Description | html.escape }}. Add this repository to VCC once, and its packages show up in all your projects.</span>
+      </p>
+
+      <div class="add">
+        <a class="button" href="vcc://vpm/addRepo?url={{ listingInfo.Url | html.url_encode }}"><span data-en="Add to VCC" data-ja="VCC に追加">Add to VCC</span></a>
+        <div class="url">
+          <code id="repo-url">{{ listingInfo.Url | html.escape }}</code>
+          <button class="copy" type="button" data-copy="{{ listingInfo.Url | html.escape }}"><span data-en="Copy" data-ja="コピー">Copy</span></button>
+        </div>
+      </div>
+      <p class="small" data-en="Works with ALCOM too. If the button does nothing, add the URL in VCC under Settings → Packages → Add Repository."
+         data-ja="ALCOM でも使えます。ボタンで開かないときは、VCC の Settings → Packages → Add Repository に URL を入れてください。">Works with ALCOM too. If the button does nothing, add the URL in VCC under Settings → Packages → Add Repository.</p>
+
+      <details class="small">
+        <summary data-en="From the command line" data-ja="コマンドで追加する">From the command line</summary>
+        <pre><code>vpm add repo {{ listingInfo.Url | html.escape }}
+vrc-get repo add {{ listingInfo.Url | html.escape }}</code></pre>
+      </details>
+
+      <h2><span data-en="Packages" data-ja="パッケージ">Packages</span></h2>
+      {{~ if packages.size > 4 ~}}
+      <input class="search" id="search" type="search" placeholder="Search" data-en-placeholder="Search" data-ja-placeholder="検索">
+      {{~ end ~}}
+      {{~ if packages.size == 0 ~}}
+      <p class="small" data-en="No packages yet." data-ja="まだパッケージはありません。">No packages yet.</p>
+      {{~ end ~}}
+
+      <ul class="list">
+        {{~ for package in packages ~}}
+        <li class="card" data-search="{{ package.DisplayName | html.escape }} {{ package.Name | html.escape }} {{ package.Description | html.escape }}">
+          <svg class="icon pkg"><use href="#{{ if package.Name == "dev.haru0416.tripwire" }}i-tripwire{{ else }}i-package{{ end }}"/></svg>
+          <div class="pkg-body">
+            <h3>{{ package.DisplayName | html.escape }} <span class="ver">{{ package.Version | html.escape }}</span></h3>
+            <p>{{ package.Description | html.escape }}</p>
+            <p class="meta">
+              {{~ if package.Type != "Any" ~}}{{ package.Type }} · {{ end ~}}
+              {{~ if package.License ~}}{{ if package.LicenseUrl }}<a href="{{ package.LicenseUrl }}">{{ package.License | html.escape }}</a>{{ else }}{{ package.License | html.escape }}{{ end }} · {{ end ~}}
+              {{~ for dep in package.Dependencies ~}}<code>{{ dep.Name | html.escape }} {{ dep.Version | html.escape }}</code> · {{ end ~}}
+              <a href="{{ package.ZipUrl }}">.zip</a>
+            </p>
+            <p class="meta"><button class="link id" type="button" data-copy="{{ package.Name | html.escape }}" title="Copy"><code>{{ package.Name | html.escape }}</code></button></p>
+          </div>
+        </li>
+        {{~ end ~}}
+      </ul>
+      <p class="small" id="no-hits" hidden data-en="Nothing matches." data-ja="見つかりません。">Nothing matches.</p>
+    </main>
+
+    <footer>
+      {{~ if listingInfo.Author.Url ~}}
+      <a href="{{ listingInfo.Author.Url }}">{{ listingInfo.Author.Name | html.escape }}</a>
+      {{~ else ~}}
+      {{ listingInfo.Author.Name | html.escape }}
+      {{~ end ~}}
+      · <a href="https://github.com/vrchat-community/package-list-action">package-list-action</a> · icons: <a href="https://lucide.dev">Lucide</a>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

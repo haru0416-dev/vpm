@@ -1,0 +1,17 @@
+{
+    "name": "haru0416 VPM",
+    "id": "dev.haru0416.vpm",
+    "url": "https://vpm.haru0416.dev/index.json",
+    "author": {
+        "name": "haru0416-dev",
+        "url": "https://haru0416.dev"
+    },
+    "description": "VRChat packages by haru0416-dev",
+    "infoLink": {
+        "url": "https://github.com/haru0416-dev/vpm",
+        "text": "View on GitHub"
+    },
+    "githubRepos": [
+        "haru0416-dev/tripwire"
+    ]
+}
