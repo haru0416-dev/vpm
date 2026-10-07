@@ -4,7 +4,10 @@ on:
   workflow_dispatch:
   push:
     branches: main
-    paths: source.json
+    paths: [source.json, Website/**]
+  # Sent by a package's release workflow, so a new version shows up in VCC without a manual run.
+  repository_dispatch:
+    types: [package-released]
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
