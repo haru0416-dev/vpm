@@ -8,17 +8,7 @@ VRChat 公式の [template-package-listing](https://github.com/vrchat-community/
 
 ## いまの状態
 
-骨組みだけです。まだ GitHub には上げていません。
-
-## 公開するときにやること
-
-1. GitHub に公開リポジトリ `haru0416-dev/vpm` を作って push する
-2. リポジトリの Settings → Pages で、Source を「GitHub Actions」にする
-3. 同じ画面の Custom domain に `vpm.haru0416.dev` を入れる
-4. haru0416.dev の DNS に CNAME を足す: `vpm` → `haru0416-dev.github.io`
-5. Tripwire のリポジトリを公開して、Actions の「Release」を手動で実行する
-   （package.json のバージョンと CHANGELOG.md の節を先に用意しておく。一覧を作る Actions は、`githubRepos` のリポジトリのリリースに付いた .zip を読む。非公開のリポジトリは読めない）
-6. Actions の「Build Repo Listing」を手動で実行する
+2026-10-08 に公開しました。一覧には Tripwire 0.1.0 と Udon Bridge 0.1.0 が載っています。紹介ページと一覧は GitHub Pages で `vpm.haru0416.dev` から配信しています（DNS は Cloudflare の CNAME `vpm` → `haru0416-dev.github.io`、プロキシなし）。
 
 ## 新しいバージョンを出したとき
 
